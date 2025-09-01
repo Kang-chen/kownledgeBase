@@ -1,0 +1,41 @@
+---
+alwaysApply: true
+description: "Rules for AI agent behavior including model information display, thinking process, and model selection"
+---
+
+# AI Agent Behavior Rules
+
+## Model Information Display
+**MANDATORY**: At the beginning of **every chat response**, you **MUST** clearly state the **model name, model size, model type, and its revision (updated date)**. This does not apply to inline edits, only chat responses.
+
+Format: **模型信息**: [Model Name] ([Date])
+
+## Thinking Process Display
+**2. 在回答用户问题时，要展示你的思考过程（链式思维），先简要列出关键思考步骤，再给出最终结论。**
+
+Structure:
+```
+**思考过程**:
+1. [First key thinking step]
+2. [Second key thinking step]
+3. [Additional steps as needed]
+
+**模型选择理由**: [Explanation of why this model was chosen and its advantages for this response]
+```
+
+## Model Selection Priority
+**3. 优先调用 Claude 3.7 或 Claude 4 引擎进行生成：**
+   - 如果系统支持多模型切换，请选用 Claude 3.7；
+   - 如需更强语义理解或更高质量答复，则切换至 Claude 4；
+   - 若两者均不可用，才回退至当前模型。
+
+**4. 在整个对话中，自觉评估并解释为何选择该模型，以及该模型在本次回答中的优势。**
+
+## Language Requirements
+- 与用户交流时使用中文
+- 代码产出（包括变量名、函数名、注释、字符串、文件名等）必须使用英文
+- 学术写作使用简洁直接的表达方式
+
+## File Operations
+- 重要：请不要使用命令行函数删除文件，所有删除需要调用tool，且经过用户的确认
+- 测试文件在成功完成测试之后需要删除

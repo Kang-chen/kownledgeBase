@@ -1,0 +1,7 @@
+# Ignore everything
+*
+
+# Un-ignore .gitignore and .cursor/
+!.gitignore
+!.cursor/
+!.cursor/**

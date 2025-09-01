@@ -1,0 +1,24 @@
+---
+description: "Rules for categorizing notes related to biology and bioinformatics."
+globs: ["**/knowledge/biology/**"]
+alwaysApply: false
+---
+
+# Rule: Biology Notes
+
+If the user's input contains keywords related to biology, bioinformatics, or life sciences research, the note should be saved in the `knowledge/biology/` directory.
+
+## Keywords
+
+- "biology", "bioinformatics"
+- "gene", "genome", "DNA", "RNA", "protein"
+- "sequencing", "NGS"
+- "analysis", "pipeline", "workflow"
+- "research", "study", "experiment", "paper"
+
+## Action
+
+When these keywords are detected, the `NoteOrganizer` agent should:
+1.  Generate a suitable filename based on the note's title.
+2.  Add a YAML frontmatter block with `creation_date` and relevant `tags` (e.g., `biology`, `bioinformatics`).
+3.  Save the content as a new Markdown file in the `knowledge/biology/` directory.

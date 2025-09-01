@@ -1,0 +1,36 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Environment Configuration Rules
+
+## Operating System
+- **Platform**: Windows
+- **Shell**: PowerShell (default terminal)
+- **File System**: NTFS with Windows path separators (`\`)
+
+## PowerShell Requirements
+- All terminal commands must be PowerShell compatible
+- Use PowerShell syntax for:
+  - File operations: `Get-ChildItem`, `New-Item`, `Remove-Item`
+  - Path handling: Use `-Path` parameter and escape sequences
+  - Environment variables: `$env:VARIABLE_NAME`
+  - Execution policy: May need `Set-ExecutionPolicy` for script execution
+
+## Development Environment
+- **Code Editor**: Cursor with MCP servers configured
+- **Package Managers**: 
+  - Python: pip, conda
+  - Node.js: npm, npx
+  - Universal: uvx (for Python tools)
+
+## File Path Conventions
+- Use forward slashes (`/`) in configuration files when possible
+- PowerShell accepts both `/` and `\` in most contexts
+- Escape paths with spaces using quotes: `"C:\Program Files\..."`
+
+## Security Considerations
+- PowerShell execution policy may restrict script execution
+- Use `-ExecutionPolicy Bypass` for temporary script execution if needed
+- Always validate file paths before operations

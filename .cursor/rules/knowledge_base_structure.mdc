@@ -1,0 +1,45 @@
+---
+alwaysApply: true
+---
+
+# Personal Knowledge Base Structure
+
+This document outlines the structure and rules for the personal knowledge base agent.
+
+## Directory Structure
+
+All knowledge base articles are stored under the `knowledge/` directory. The structure is as follows:
+
+```
+/knowledge/
+  ├── planning/      # Notes related to project planning, roadmaps, and goals.
+  ├── programming/   # Notes related to software development, algorithms, and coding.
+  └── biology/       # Notes related to biology, bioinformatics, and research.
+  ├── inbox/         # Inbox for unprocessed notes and ideas.
+  └── logs/          # Logs for tracking changes and activities.
+```
+
+## File Naming Convention
+
+- File names should be in English, using lowercase letters.
+- Words should be separated by hyphens (`-`).
+- The file extension should be `.md`.
+- Example: `my-research-notes.md`.
+
+## Content Format
+
+- All notes must be in Markdown format.
+- Each note should start with a level 1 heading (`#`) containing the title.
+- Use metadata at the top of the file (YAML frontmatter) to store tags, creation date, etc.
+
+Example:
+```markdown
+---
+creation_date: YYYY-MM-DD
+tags: [example, tag]
+---
+
+# Title of the Note
+
+This is the content of the note.
+```

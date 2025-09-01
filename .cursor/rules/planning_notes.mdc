@@ -1,0 +1,24 @@
+---
+description: "Rules for categorizing notes related to planning."
+globs: ["**/knowledge/planning/**"]
+alwaysApply: false
+---
+
+# Rule: Planning Notes
+
+If the user's input contains keywords related to planning, the note should be saved in the `knowledge/planning/` directory.
+
+## Keywords
+
+- "plan", "planning"
+- "roadmap"
+- "goal", "objective"
+- "milestone"
+- "strategy"
+
+## Action
+
+When these keywords are detected, the `NoteOrganizer` agent should:
+1.  Generate a suitable filename based on the note's title.
+2.  Add a YAML frontmatter block with `creation_date` and relevant `tags` (e.g., `planning`).
+3.  Save the content as a new Markdown file in the `knowledge/planning/` directory.
