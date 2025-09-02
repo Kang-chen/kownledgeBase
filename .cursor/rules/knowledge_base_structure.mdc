@@ -32,10 +32,20 @@ All knowledge base articles are stored under the `knowledge/` directory. The str
 - Each note should start with a level 1 heading (`#`) containing the title.
 - Use metadata at the top of the file (YAML frontmatter) to store tags, creation date, etc.
 
+## Time Recording Requirements
+
+When recording timestamps or dates in notes:
+- **Always use the `date` command to get the current system time**
+- Use the format: `YYYY-MM-DD` for dates
+- Use the format: `YYYY-MM-DD HH:MM:SS` for timestamps
+- Run `date` command before creating or updating notes to ensure accurate time recording
+- This applies to creation_date, modification_date, and any other time-related metadata
+
 Example:
 ```markdown
 ---
 creation_date: YYYY-MM-DD
+last_modified: YYYY-MM-DD HH:MM:SS
 tags: [example, tag]
 ---
 
@@ -43,3 +53,14 @@ tags: [example, tag]
 
 This is the content of the note.
 ```
+
+## Changelog and Logging Requirements
+
+- **All file operations (creation, modification, deletion) must be logged.**
+- A detailed entry must be added to the changelog located at [knowledge/logs/changelog.md](mdc:knowledge/logs/changelog.md).
+- Each changelog entry must include:
+    - A timestamp (`YYYY-MM-DD HH:MM:SS`).
+    - The type of operation (e.g., `[ADD]`, `[UPDATE]`, `[DELETE]`).
+    - The full path to the affected file.
+    - A brief description of the change in Chinese.
+- Refer to the [user-content-handling.mdc](mdc:.cursor/rules/user-content-handling.mdc) rule for detailed logging format and language specifications.

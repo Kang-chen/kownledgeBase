@@ -21,4 +21,5 @@ If the user's input contains keywords related to planning, the note should be sa
 When these keywords are detected, the `NoteOrganizer` agent should:
 1.  Generate a suitable filename based on the note's title.
 2.  Add a YAML frontmatter block with `creation_date` and relevant `tags` (e.g., `planning`).
+    *   **分类逻辑增强**：可以根据具体项目、时间线（如 `weekly-plan`, `monthly-plan`）或类型（如 `project-alpha-plan`）在 `tags` 中进一步细分，或添加 `category` 等新的元数据字段。
 3.  Save the content as a new Markdown file in the `knowledge/planning/` directory.

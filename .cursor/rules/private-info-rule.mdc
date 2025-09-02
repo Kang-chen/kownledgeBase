@@ -1,0 +1,58 @@
+---
+alwaysApply: false
+description: Rules for storing and isolating sensitive/private notes and credentials
+globs: knowledge/**/*.md,knowledge/**/*.txt,knowledge/**/*.json,knowledge/**/*.yaml,knowledge/**/*.yml
+---
+# 私密信息管理规则
+
+为了确保敏感信息的安全，所有私密或敏感的笔记、配置文件和凭证都必须存放在一个专门的 `private` 目录中。
+
+## 目录结构
+
+私密信息目录应位于 `knowledge/` 目录下，与其他知识分类平行：
+
+```
+/knowledge/
+  ├── private/       # 用于存放敏感信息，例如 API 密钥、密码、个人身份信息等。
+  ├── planning/
+  ├── programming/
+  └── biology/
+  └── ...
+```
+
+## 适用范围
+
+- 适用于 `knowledge/` 下所有非 `private/` 路径中的文本与配置文件（见 globs）。
+- 如检测到敏感信息，应立即执行“处置流程”。
+
+## 判定与检测要点
+
+- 关键词（不区分大小写，示例）：`password`、`passwd`、`token`、`secret`、`api_key`、`client_id`、`client_secret`、`refresh_token`、`Bearer`、`Authorization:`。
+- 常见前缀/模式：`ghp_`/`gho_`（GitHub Token）、`AKIA`（AWS Access Key）、`xoxb-`（Slack Bot Token）、`-----BEGIN PRIVATE KEY-----`/`-----BEGIN.*KEY-----`（各类私钥）。
+- 其他迹象：
+  - URL 中包含 `?token=` 或 `access_token=` 参数。
+  - 明显长度较长（> 20）的Base64/十六进制样式字符串且看似凭证。
+
+## 处置流程
+
+1. 立即将包含敏感信息的文件移动至 `knowledge/private/`。
+2. 更新所有引用路径，确保引用指向 `knowledge/private/` 下的新位置。
+3. 如需记录迁移，请在 `knowledge/logs/changelog.md` 中添加变更条目（含时间、原因与受影响路径）。
+4. 如必须在公开笔记中引用，请仅保留必要的非敏感摘要信息，不得包含密钥明文。
+
+## 组织与命名建议
+
+- 文件名使用英文小写与连字符（kebab-case），例如：`github-config.md`、`aws-credentials.md`。
+- 将不同服务的凭证与配置拆分为独立文件，并最小披露（仅保存所需字段）。
+- 建议在 `private/` 内建立按服务归类的子目录（例如：`private/cloud/`、`private/vcs/`）。
+
+## 示例
+
+- 合规：在 `knowledge/private/` 保存包含 GitHub Token 的文件，并在其他笔记中以受控方式引用。
+  - 示例文件：[`github-config.md`](mdc:knowledge/private/github-config.md)
+- 不合规：在 `knowledge/programming/` 或 `knowledge/biology/` 中直接保存含密钥的明文文件。
+
+## 与其他规则的衔接
+
+- 本规则与知识库结构相关规则配合使用，确保分类清晰与敏感信息隔离。
+- 如遇到与其他规则冲突，以“敏感信息优先隔离”原则处理。

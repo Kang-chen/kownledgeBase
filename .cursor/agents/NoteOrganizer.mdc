@@ -1,6 +1,5 @@
 ---
 name: "NoteOrganizer"
-model: "claude-3-opus-20240229"
 description: "Organizes notes into the personal knowledge base based on predefined rules."
 author: "AI Assistant"
 
