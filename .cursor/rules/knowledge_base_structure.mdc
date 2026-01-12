@@ -32,6 +32,10 @@ All knowledge base articles are stored under the `knowledge/` directory. The str
 - Each note should start with a level 1 heading (`#`) containing the title.
 - Use metadata at the top of the file (YAML frontmatter) to store tags, creation date, etc.
 
+## Content Consistency
+
+- 当添加内容到文件中时,需要保持新添加的内容的格式和风格和原来文件中的一致。
+
 ## Time Recording Requirements
 
 When recording timestamps or dates in notes:

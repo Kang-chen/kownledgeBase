@@ -3,5 +3,6 @@
 
 # Un-ignore .gitignore and .cursor/
 !.gitignore
+!.cursorignore
 !.cursor/
 !.cursor/**

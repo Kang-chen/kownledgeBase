@@ -1,0 +1,11 @@
+# Cursor Ignore Configuration
+# Override .gitignore to let Cursor read these files
+# 使用否定模式(!)来覆盖 .gitignore，让 Cursor 可以读取这些文件
+
+# Include knowledge/ directory (override .gitignore)
+!knowledge/
+!knowledge/**/*
+
+# Add other directories here if needed
+# !data/
+# !cheetsheet/
