@@ -1,11 +1,9 @@
 # Cursor Ignore Configuration
-# Override .gitignore to let Cursor read these files
-# 使用否定模式(!)来覆盖 .gitignore，让 Cursor 可以读取这些文件
+# 浣跨敤 !* 鍚﹀畾鎵€鏈?.gitignore 瑙勫垯锛岃 Cursor 鍙互璇诲彇鎵€鏈夋枃浠?# 鍙傝€? https://docs.cursor.com/en/context/ignore-files
 
-# Include knowledge/ directory (override .gitignore)
-!knowledge/
-!knowledge/**/*
+# Negate all gitignore rules - allow Cursor to read all files
+!*
 
-# Add other directories here if needed
-# !data/
-# !cheetsheet/
+# 濡傛灉闇€瑕佽 Cursor 蹇界暐鏌愪簺鏂囦欢锛屽湪涓嬮潰娣诲姞
+# 渚嬪锛氬拷鐣ュぇ鍨嬫暟鎹枃浠?# *.csv
+# *.parquet

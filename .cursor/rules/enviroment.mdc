@@ -59,3 +59,9 @@ alwaysApply: true
 - PowerShell execution policy may restrict script execution
 - Use `-ExecutionPolicy Bypass` for temporary script execution if needed
 - Always validate file paths before operations
+
+## .cursor Directory Protection
+- **Only edit `.cursor/` files when explicitly requested by the user**
+- The `.cursor/` directory contains critical configuration files (rules, skills, settings)
+- Do NOT proactively modify, create, or delete files under `.cursor/` without explicit user instruction
+- When user explicitly requests changes to `.cursor/` files, proceed with the operation
