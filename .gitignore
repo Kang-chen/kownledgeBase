@@ -6,3 +6,7 @@
 !.cursorignore
 !.cursor/
 !.cursor/**
+
+# Knowledge folder has its own local git repo
+# Option 1: Ignore it completely (recommended for nested repo)
+knowledge/

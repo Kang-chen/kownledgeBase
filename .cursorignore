@@ -1,9 +1,8 @@
 # Cursor Ignore Configuration
-# 浣跨敤 !* 鍚﹀畾鎵€鏈?.gitignore 瑙勫垯锛岃 Cursor 鍙互璇诲彇鎵€鏈夋枃浠?# 鍙傝€? https://docs.cursor.com/en/context/ignore-files
+# Negate all gitignore rules to allow Cursor to read all files
 
-# Negate all gitignore rules - allow Cursor to read all files
 !*
 
-# 濡傛灉闇€瑕佽 Cursor 蹇界暐鏌愪簺鏂囦欢锛屽湪涓嬮潰娣诲姞
-# 渚嬪锛氬拷鐣ュぇ鍨嬫暟鎹枃浠?# *.csv
-# *.parquet
+# Include knowledge folder (nested git repo)
+!knowledge/
+!knowledge/**

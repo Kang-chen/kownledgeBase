@@ -25,6 +25,7 @@ This skill is responsible for automatically categorizing and storing notes in th
    - `planning_notes.mdc`: For notes about planning, roadmaps, etc.
    - `programming_notes.mdc`: For notes about coding, algorithms, etc.
    - `biology_notes.mdc`: For notes about biology, bioinformatics, etc.
+   - For SOP/Loop pages, use the `loop-page-creator` skill instead.
 
 3. **Determine Target Path**: Based on the matching rule, determine the target directory (e.g., `knowledge/planning/`).
 
@@ -48,8 +49,13 @@ This skill is responsible for automatically categorizing and storing notes in th
 ├── programming/   # Notes related to software development, algorithms, and coding.
 ├── biology/       # Notes related to biology, bioinformatics, and research.
 ├── inbox/         # Inbox for unprocessed notes and ideas.
-└── logs/          # Logs for tracking changes and activities.
+├── logs/          # Logs for tracking changes and activities.
+├── SOP/           # Standard Operating Procedures and company Loop documentation.
+├── private/       # Private notes, credentials references, and personal information.
+└── travel/        # Travel plans and related notes.
 ```
+
+**Note**: For SOP/Loop pages, use the `loop-page-creator` skill which follows company Loop standards.
 
 ## File Naming Convention
 

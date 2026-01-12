@@ -14,10 +14,21 @@ All knowledge base articles are stored under the `knowledge/` directory. The str
 /knowledge/
   ├── planning/      # Notes related to project planning, roadmaps, and goals.
   ├── programming/   # Notes related to software development, algorithms, and coding.
-  └── biology/       # Notes related to biology, bioinformatics, and research.
+  ├── biology/       # Notes related to biology, bioinformatics, and research.
   ├── inbox/         # Inbox for unprocessed notes and ideas.
-  └── logs/          # Logs for tracking changes and activities.
+  ├── logs/          # Logs for tracking changes and activities.
+  ├── SOP/           # Standard Operating Procedures and company Loop documentation.
+  ├── private/       # Private notes, credentials references, and personal information.
+  └── travel/        # Travel plans and related notes.
 ```
+
+## SOP Directory (Loop Pages)
+
+The `SOP/` directory contains company Loop workspace documentation:
+- Follow the company's Loop SOP guidelines in `SOP/Loop.md`
+- Use tag-based naming: `[Doc]`, `[SOP]`, `[Log]`, `[Ref]`, `[Draft]`
+- Structure: Module → Entity → Perspective
+- Required elements: Abstract, TOC, Body, Metadata
 
 ## File Naming Convention
 
