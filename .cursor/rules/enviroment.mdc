@@ -30,6 +30,31 @@ alwaysApply: true
 - PowerShell accepts both `/` and `\` in most contexts
 - Escape paths with spaces using quotes: `"C:\Program Files\..."`
 
+## PowerShell Encoding Best Practices
+
+**Problem**: PowerShell has encoding issues with Chinese characters when passing strings directly to commands (e.g., git commit messages).
+
+**Solutions**:
+1. **Use English for commit messages** - Avoid encoding issues entirely
+2. **Use file-based approach for Chinese text**:
+   ```powershell
+   # Write to temp file with UTF-8 (no BOM), then use -F flag
+   $msg = "中文消息"
+   $file = "COMMIT_MSG.tmp"
+   [System.IO.File]::WriteAllText($file, $msg, [System.Text.UTF8Encoding]::new($false))
+   git commit -F $file
+   Remove-Item $file
+   ```
+3. **For file creation with Chinese content**:
+   ```powershell
+   [System.IO.File]::WriteAllText($path, $content, [System.Text.UTF8Encoding]::new($false))
+   ```
+
+**Avoid**:
+- Using `@" "@ | Out-File` for Chinese text (may cause encoding issues)
+- Passing Chinese strings directly via `-m` parameter
+- Using bash heredoc syntax (`<<'EOF'`) in PowerShell
+
 ## Security Considerations
 - PowerShell execution policy may restrict script execution
 - Use `-ExecutionPolicy Bypass` for temporary script execution if needed
