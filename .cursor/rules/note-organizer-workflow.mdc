@@ -10,15 +10,37 @@ This rule outlines the workflow for the `NoteOrganizer` agent, which is responsi
 ## Workflow Steps:
 
 1.  **Analyze Input**: Analyze the user's input to identify the main topic and relevant keywords.
-2.  **Consult Rules**: Read the rule files located in `.cursor/rules/` to determine the appropriate category and directory for the note. The rules to be consulted are:
-    - `knowledge_base_structure.mdc`: General structure and formatting.
-    - `planning_notes.mdc`: For notes about planning, roadmaps, etc.
-    - `programming_notes.mdc`: For notes about coding, algorithms, etc.
-    - `biology_notes.mdc`: For notes about biology, bioinformatics, etc.
-3.  **Determine Target Path**: Based on the matching rule, determine the target directory (e.g., `knowledge/planning/`).
-4.  **Generate File Name**: Create a descriptive, hyphen-separated filename from the note's title (e.g., `my-new-research-plan.md`).
-5.  **Format Content**:
-    - Add a YAML frontmatter block with `creation_date` and `tags`.
+
+2.  **Load Project Memory**: Read project metadata files from `knowledge/projects/` to understand active projects and their file organization.
+
+3.  **Consult Rules (MUST READ)**:
+    > ⚠️ **重要**: 必须使用 Read 工具主动读取以下规则文件，不要依赖自动加载！
+    
+    **必读规则**（根据目标目录选择）:
+    - `planning_notes.mdc`: 归档到 planning 目录时**必读**，包含 TODO 归档命令
+    - `programming_notes.mdc`: 归档到 programming 目录时**必读**
+    - `biology_notes.mdc`: 归档到 biology 目录时**必读**
+    - `project-organization.mdc`: 处理多文件归档时**必读**，包含项目组织规则
+    
+    **读取方法**:
+    ```
+    Read: d:\kownledgeBase\.cursor\rules\{rule_name}.mdc
+    ```
+
+4.  **Identify Project**: Match content keywords to active projects (see `project-organization.mdc`).
+
+5.  **Determine Target Path**: Based on the matching rule and project, determine the target directory:
+    - 有项目归属: `knowledge/{category}/{project}/`
+    - 无项目归属: `knowledge/{category}/`
+
+6.  **Generate File Name**: Create a descriptive, hyphen-separated filename from the note's title (e.g., `my-new-research-plan.md`).
+
+7.  **Format Content**:
+    - Add a YAML frontmatter block with `creation_date`, `tags`, and `project` (if applicable).
     - Ensure the content is in valid Markdown format.
-6.  **Save File**: Use the `edit_file` tool to create a new file with the formatted content in the determined target path.
-7.  **Confirm**: Report the successful creation and location of the new note to the user.
+
+8.  **Save File**: Use the `edit_file` tool to create a new file with the formatted content in the determined target path.
+
+9.  **Update Changelog**: Add entry to `knowledge/logs/changelog.md`.
+
+10. **Confirm**: Report the successful creation and location of the new note to the user.

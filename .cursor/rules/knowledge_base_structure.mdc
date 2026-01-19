@@ -12,15 +12,29 @@ All knowledge base articles are stored under the `knowledge/` directory. The str
 
 ```
 /knowledge/
+  ├── projects/      # Project metadata (Agent Memory) - see project-organization.mdc
   ├── planning/      # Notes related to project planning, roadmaps, and goals.
   ├── programming/   # Notes related to software development, algorithms, and coding.
+  │   ├── {project}/       # Project-specific subdirectories
+  │   └── commands/        # Common commands and scripts (no project affiliation)
   ├── biology/       # Notes related to biology, bioinformatics, and research.
+  │   └── {project}/       # Project-specific subdirectories
   ├── inbox/         # Inbox for unprocessed notes and ideas.
   ├── logs/          # Logs for tracking changes and activities.
   ├── SOP/           # Standard Operating Procedures and company Loop documentation.
   ├── private/       # Private notes, credentials references, and personal information.
   └── travel/        # Travel plans and related notes.
 ```
+
+## Subdirectory Organization Principle
+
+为防止单层目录文件过多，应遵循以下原则：
+
+- **项目优先**：按项目创建子目录（如 `programming/{project}/`），具体项目信息见 `knowledge/projects/_index.md`
+- **阈值规则**：同类文件超过 **5 个**时，应创建子目录进行分组
+- **子目录命名**：使用小写英文，以项目名或主题名命名
+- **相关资源**：`.assets` 文件夹应与对应的 `.md` 文件放在同一目录下
+- **归档整理**：从 inbox 归档时，先加载项目索引 (`knowledge/projects/_index.md`)，匹配项目后归入对应子目录
 
 ## SOP Directory (Loop Pages)
 
