@@ -1,0 +1,35 @@
+---
+name: changelog
+description: >-
+  Rules for maintaining the changelog file. Defines log format, required fields,
+  and update triggers for knowledge base file operations.
+---
+
+# Changelog Rules
+
+This skill defines the format and maintenance process for the `changelog.md` file, which tracks all significant changes to the knowledge base.
+
+## Log Format
+
+Each entry in the changelog must be in Markdown format and include:
+- **Timestamp**: The date and time of the change in `YYYY-MM-DD HH:MM:SS` format
+- **Action**: The type of action performed (e.g., `CREATE`, `UPDATE`, `DELETE`)
+- **Path**: The full path to the file that was changed
+- **Description**: A brief summary of the changes made (in Chinese)
+
+### Example Entry
+
+```markdown
+- **2023-10-27 10:00:00** | `CREATE` | `knowledge/biology/new-research-note.md` | Added initial notes on protein folding.
+```
+
+## Update Trigger
+
+The `NoteOrganizer` agent (or any other agent making changes) must append a new entry to `knowledge/logs/changelog.md` whenever a file is created, updated, or deleted within the `knowledge/` directory.
+
+## Best Practices
+
+1. Always get current timestamp using system `date` command before logging
+2. Use consistent action keywords: `CREATE`, `UPDATE`, `DELETE`, `MOVE`, `ARCHIVE`
+3. Keep descriptions concise but informative
+4. Include both source and destination paths for `MOVE` operations

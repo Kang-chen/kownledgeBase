@@ -1,8 +1,10 @@
 ---
-description:
-globs:
-alwaysApply: true
+name: environment
+description: >-
+  Windows/PowerShell environment configuration rules. Applies to all operations.
+  Covers shell commands, file paths, encoding best practices, and .cursor directory protection.
 ---
+
 # Environment Configuration Rules
 
 ## Operating System
@@ -20,7 +22,7 @@ alwaysApply: true
 
 ## Development Environment
 - **Code Editor**: Cursor with MCP servers configured
-- **Package Managers**: 
+- **Package Managers**:
   - Python: pip, conda
   - Node.js: npm, npx
   - Universal: uvx (for Python tools)

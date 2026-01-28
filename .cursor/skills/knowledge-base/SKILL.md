@@ -1,5 +1,8 @@
 ---
-alwaysApply: true
+name: knowledge-base
+description: >-
+  Personal knowledge base structure and organization rules. Defines directory layout,
+  file naming conventions, content format, time recording, and changelog requirements.
 ---
 
 # Personal Knowledge Base Structure
@@ -8,11 +11,11 @@ This document outlines the structure and rules for the personal knowledge base a
 
 ## Directory Structure
 
-All knowledge base articles are stored under the `knowledge/` directory. The structure is as follows:
+All knowledge base articles are stored under the `knowledge/` directory:
 
 ```
 /knowledge/
-  ├── projects/      # Project metadata (Agent Memory) - see project-organization.mdc
+  ├── projects/      # Project metadata (Agent Memory) - see project-organization skill
   ├── planning/      # Notes related to project planning, roadmaps, and goals.
   ├── programming/   # Notes related to software development, algorithms, and coding.
   │   ├── {project}/       # Project-specific subdirectories
@@ -28,13 +31,13 @@ All knowledge base articles are stored under the `knowledge/` directory. The str
 
 ## Subdirectory Organization Principle
 
-为防止单层目录文件过多，应遵循以下原则：
+To prevent directory clutter:
 
-- **项目优先**：按项目创建子目录（如 `programming/{project}/`），具体项目信息见 `knowledge/projects/_index.md`
-- **阈值规则**：同类文件超过 **5 个**时，应创建子目录进行分组
-- **子目录命名**：使用小写英文，以项目名或主题名命名
-- **相关资源**：`.assets` 文件夹应与对应的 `.md` 文件放在同一目录下
-- **归档整理**：从 inbox 归档时，先加载项目索引 (`knowledge/projects/_index.md`)，匹配项目后归入对应子目录
+- **Project priority**: Create subdirectories by project (e.g., `programming/{project}/`)
+- **Threshold rule**: Create subdirectory when same-category files exceed **5**
+- **Naming**: Use lowercase English, named by project or topic
+- **Related resources**: `.assets` folder should be in same directory as corresponding `.md` file
+- **Archival**: When archiving from inbox, load project index (`knowledge/projects/_index.md`) first
 
 ## SOP Directory (Loop Pages)
 
@@ -46,20 +49,20 @@ The `SOP/` directory contains company Loop workspace documentation:
 
 ## File Naming Convention
 
-- File names should be in English, using lowercase letters.
-- Words should be separated by hyphens (`-`).
-- The file extension should be `.md`.
-- Example: `my-research-notes.md`.
+- File names should be in English, using lowercase letters
+- Words should be separated by hyphens (`-`)
+- The file extension should be `.md`
+- Example: `my-research-notes.md`
 
 ## Content Format
 
-- All notes must be in Markdown format.
-- Each note should start with a level 1 heading (`#`) containing the title.
+- All notes must be in Markdown format
+- Each note should start with a level 1 heading (`#`) containing the title
 - Use metadata at the top of the file (YAML frontmatter) to store tags, creation date, etc.
 
 ## Content Consistency
 
-- 当添加内容到文件中时,需要保持新添加的内容的格式和风格和原来文件中的一致。
+- When adding content to a file, maintain format and style consistency with existing content
 
 ## Time Recording Requirements
 
@@ -68,7 +71,6 @@ When recording timestamps or dates in notes:
 - Use the format: `YYYY-MM-DD` for dates
 - Use the format: `YYYY-MM-DD HH:MM:SS` for timestamps
 - Run `date` command before creating or updating notes to ensure accurate time recording
-- This applies to creation_date, modification_date, and any other time-related metadata
 
 Example:
 ```markdown
@@ -85,11 +87,11 @@ This is the content of the note.
 
 ## Changelog and Logging Requirements
 
-- **All file operations (creation, modification, deletion) must be logged.**
-- A detailed entry must be added to the changelog located at [knowledge/logs/changelog.md](mdc:knowledge/logs/changelog.md).
+- **All file operations (creation, modification, deletion) must be logged**
+- A detailed entry must be added to the changelog at `knowledge/logs/changelog.md`
 - Each changelog entry must include:
-    - A timestamp (`YYYY-MM-DD HH:MM:SS`).
-    - The type of operation (e.g., `[ADD]`, `[UPDATE]`, `[DELETE]`).
-    - The full path to the affected file.
-    - A brief description of the change in Chinese.
-- Refer to the [user-content-handling.mdc](mdc:.cursor/rules/user-content-handling.mdc) rule for detailed logging format and language specifications.
+  - A timestamp (`YYYY-MM-DD HH:MM:SS`)
+  - The type of operation (e.g., `[ADD]`, `[UPDATE]`, `[DELETE]`)
+  - The full path to the affected file
+  - A brief description of the change in Chinese
+- Refer to the content-handling skill for detailed logging format and language specifications
