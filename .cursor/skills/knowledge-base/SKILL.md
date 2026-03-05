@@ -22,12 +22,31 @@ All knowledge base articles are stored under the `knowledge/` directory:
   │   └── commands/        # Common commands and scripts (no project affiliation)
   ├── biology/       # Notes related to biology, bioinformatics, and research.
   │   └── {project}/       # Project-specific subdirectories
-  ├── inbox/         # Inbox for unprocessed notes and ideas.
+  ├── inbox/         # Inbox for unprocessed notes and ideas (user writes here via Typora).
+  ├── archive/       # Immutable archive of original inbox files, organized by month (YYYY-MM/).
+  ├── _memory/       # Agent memory: structured knowledge entries extracted from archive.
+  │   ├── _index.md        # Knowledge index (Agent loads this first for retrieval)
+  │   └── entries/         # Individual knowledge entry files
+  ├── digests/       # Weekly review summaries (_YYYY-Www-digest.md).
   ├── logs/          # Logs for tracking changes and activities.
   ├── SOP/           # Standard Operating Procedures and company Loop documentation.
   ├── private/       # Private notes, credentials references, and personal information.
   └── travel/        # Travel plans and related notes.
 ```
+
+## `_` Prefix Naming Convention
+
+Files and directories prefixed with `_` are Agent-maintained metadata (indexes, logs, digests, memory store). Users should not manually edit these — Agent updates them automatically during operations.
+
+Examples:
+- `logs/_changelog.md` — Agent-appended operation log
+- `projects/_index.md` — Agent-maintained project index
+- `_memory/` — Agent memory directory (knowledge entries + index)
+- `_memory/_index.md` — Agent memory index
+- `digests/_YYYY-Www-digest.md` — Agent-generated weekly digest
+
+Files **without** `_` prefix are user-editable content:
+- `todolist.md`, `inbox/*.md`, `_memory/entries/*.md`, `planning/YYYY-MM/completed-todos-*.md`
 
 ## Subdirectory Organization Principle
 
@@ -88,7 +107,7 @@ This is the content of the note.
 ## Changelog and Logging Requirements
 
 - **All file operations (creation, modification, deletion) must be logged**
-- A detailed entry must be added to the changelog at `knowledge/logs/changelog.md`
+- A detailed entry must be added to the changelog at `knowledge/logs/_changelog.md`
 - Each changelog entry must include:
   - A timestamp (`YYYY-MM-DD HH:MM:SS`)
   - The type of operation (e.g., `[ADD]`, `[UPDATE]`, `[DELETE]`)

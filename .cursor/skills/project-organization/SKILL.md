@@ -38,8 +38,14 @@ knowledge/
 ├── biology/
 │   ├── {project-a}/            # Project A - biology related
 │   └── {project-b}/            # Project B - biology related
-└── planning/
-    └── (organized by date/project TODO)
+├── planning/
+│   └── (organized by date/project TODO)
+├── archive/                     # Immutable inbox archive (by month)
+│   └── YYYY-MM/
+├── _memory/                     # Agent memory (knowledge entries)
+│   ├── _index.md               # Knowledge index (must read for retrieval)
+│   └── entries/
+└── digests/                     # Weekly review summaries
 ```
 
 ## Rule Loading Guidance (On-Demand Loading)
@@ -56,6 +62,8 @@ When executing the following operations, **must proactively use Read tool to loa
 | Create/edit biology files | notes-categorizer skill (biology section) |
 | Handle sensitive information | private-info skill |
 | Update changelog | changelog skill |
+| Inbox processing (周回顾) | `knowledge/_memory/_index.md` + note-organizer skill (Inbox Processing section) |
+| Search historical knowledge | `knowledge/_memory/_index.md` |
 
 ### Why Proactive Loading?
 

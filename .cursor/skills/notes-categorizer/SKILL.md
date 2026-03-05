@@ -3,6 +3,7 @@ name: notes-categorizer
 description: >-
   Rules for categorizing notes into planning, programming, and biology directories.
   Includes keyword matching, file formatting, and special commands like TODO archival.
+  Trigger on: 归档TODO, 周归档. Also handles [~] cancelled tasks.
 ---
 
 # Notes Categorization Rules
@@ -26,25 +27,48 @@ When these keywords are detected:
 2. Add YAML frontmatter with `creation_date` and relevant `tags` (e.g., `planning`)
 3. Save as Markdown file in `knowledge/planning/`
 
-### Command: Archive TODO (Weekly)
+### Command: Archive TODO
 
-Archives completed todo items from all markdown files in `knowledge/planning/` into weekly archive files.
+Archives completed and cancelled todo items from `knowledge/planning/todolist.md` into weekly archive files.
 
-**Workflow:**
-1. **Scan Files**: Scan all `.md` files in `knowledge/planning/`
-2. **Identify Completed Todos**: Items starting with `- [x]` or `- [X]` within past week
-3. **Get Current Week/Month**: Use system time for `YYYY-MM` folder and `YYYY-MM-DD` file
-4. **Create Monthly Folder**: Create `knowledge/planning/YYYY-MM/` if needed
-5. **Create Archive File**: Create `completed-todos-YYYY-MM-DD-weekly.md`
-6. **Migrate Todos**: Preserve original structure with file headings
-7. **Remove from Source**: Delete migrated items from original files
-8. **Log Changes**: Append to `knowledge/logs/changelog.md`
+**Two-Phase Execution** (both phases are mandatory):
 
-**Invocation**:
-- Trigger: `归档TODO`
-- Options:
-  - `--week=YYYY-MM-DD` (default: current week)
-  - `--dry-run` (preview only)
+#### Phase 1 — Scan & Preview
+
+1. Read `knowledge/planning/todolist.md`
+2. Identify archivable top-level items:
+   - `[x]` — completed tasks (include all sub-tasks regardless of their status)
+   - `[~]` — cancelled tasks (include all sub-tasks, mark as "已取消" in archive)
+3. Never archive `[ ]` parent tasks, even if some sub-tasks are `[x]`
+4. Present a preview table to the user:
+
+```
+| # | Status | Task | Sub-tasks |
+|---|--------|------|-----------|
+| 1 | ✅ 完成 | Task description | 3/3 |
+| 2 | ❌ 取消 | Task description | 1/2 |
+```
+
+5. **Wait for user confirmation before proceeding to Phase 2**
+
+#### Phase 2 — Execute Archive
+
+1. Get current date via `date` command
+2. Create directory `knowledge/planning/YYYY-MM/` if needed
+3. Create or append to `knowledge/planning/YYYY-MM/completed-todos-YYYY-MM-DD-weekly.md`:
+
+```yaml
+---
+creation_date: YYYY-MM-DD
+tags: [planning, archive, completed-todos]
+---
+```
+
+4. Write archived items preserving original markdown structure
+5. For `[~]` items, prepend "**[已取消]**" to the task line
+6. Remove archived items from source `todolist.md`
+7. Append to `knowledge/logs/_changelog.md`
+8. Present summary: N completed, M cancelled, archive file path
 
 ---
 

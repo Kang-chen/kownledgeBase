@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "projects": {
+    "index_file": "knowledge/projects/_index.md",
+    "metadata_dir": "knowledge/projects/",
+    "content_dirs": {
+      "programming": "knowledge/programming/",
+      "biology": "knowledge/biology/",
+      "planning": "knowledge/planning/"
+    }
+  },
+  "skills": {
+    "delegate_to": "skill-manager",
+    "source_dir": ".agent/skills/"
+  }
+}

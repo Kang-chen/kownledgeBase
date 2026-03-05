@@ -1,0 +1,294 @@
+#!/usr/bin/env python3
+"""
+Workspace Manager - Unified CLI for projects and skills management.
+
+Usage:
+    ws                          # Show workspace status
+    ws status                   # Show workspace status
+    ws project list             # List all projects
+    ws project create <name>    # Create new project
+    ws project info <name>      # Show project details
+    ws project update <name>    # Update project metadata
+    ws skill <subcommand>       # Delegate to skill-manager
+"""
+
+import sys
+import os
+import json
+import re
+from pathlib import Path
+from datetime import datetime
+from typing import Optional, Dict, List
+
+# Paths
+SCRIPT_DIR = Path(__file__).parent.parent
+KNOWLEDGE_BASE = SCRIPT_DIR.parent.parent.parent / "knowledge"
+PROJECTS_DIR = KNOWLEDGE_BASE / "projects"
+PROJECTS_INDEX = PROJECTS_DIR / "_index.md"
+SKILLS_DIR = SCRIPT_DIR.parent
+SKILL_MANAGER_SCRIPT = SKILLS_DIR / "skill-manager" / "scripts" / "skills"
+TEMPLATE_DIR = SCRIPT_DIR / "templates"
+
+
+def print_header(title: str):
+    """Print a formatted header."""
+    width = 52
+    print("╔" + "═" * width + "╗")
+    print("║" + title.center(width) + "║")
+    print("╠" + "═" * width + "╣")
+
+
+def print_footer():
+    """Print a formatted footer."""
+    print("╚" + "═" * 52 + "╝")
+
+
+def get_projects() -> List[Dict]:
+    """Parse projects from _index.md."""
+    projects = []
+    if not PROJECTS_INDEX.exists():
+        return projects
+
+    content = PROJECTS_INDEX.read_text(encoding="utf-8")
+
+    # Parse table rows (skip header)
+    table_pattern = r"\|\s*([^|]+)\s*\|\s*`([^`]+)`\s*\|\s*(\w+)\s*\|\s*([^|]+)\s*\|"
+    matches = re.findall(table_pattern, content)
+
+    for match in matches:
+        if match[0].strip() != "项目":  # Skip header
+            projects.append({
+                "name": match[0].strip(),
+                "metadata_file": match[1].strip(),
+                "status": match[2].strip(),
+                "description": match[3].strip()
+            })
+
+    return projects
+
+
+def get_skills() -> List[str]:
+    """List installed skills."""
+    skills = []
+    if SKILLS_DIR.exists():
+        for item in SKILLS_DIR.iterdir():
+            if item.is_dir() and (item / "SKILL.md").exists():
+                skills.append(item.name)
+    return sorted(skills)
+
+
+def show_status():
+    """Show workspace overview."""
+    projects = get_projects()
+    skills = get_skills()
+
+    print_header("Workspace Manager - Overview")
+    print(f"║ Active Projects: {len(projects):<34}║")
+    print(f"║ Installed Skills: {len(skills):<33}║")
+    print(f"║ Knowledge Base: knowledge/{' ' * 24}║")
+    print_footer()
+
+    print("\nProjects:")
+    for p in projects:
+        status_icon = "●" if p["status"] == "active" else "○"
+        print(f"  {status_icon} {p['name']} ({p['status']})")
+
+    print("\nSkills:")
+    for i, s in enumerate(skills[:5]):
+        print(f"  • {s}")
+    if len(skills) > 5:
+        print(f"  ... and {len(skills) - 5} more")
+
+    print("\nQuick Actions:")
+    print("  1. ws project list    - View all projects")
+    print("  2. ws project create  - Create new project")
+    print("  3. ws skill list      - View installed skills")
+    print("  4. ws skill sync      - Sync skills to IDEs")
+
+
+def list_projects():
+    """List all projects."""
+    projects = get_projects()
+
+    if not projects:
+        print("No projects found.")
+        print(f"Projects index: {PROJECTS_INDEX}")
+        return
+
+    print("\n Projects")
+    print("-" * 60)
+    print(f"{'Name':<25} {'Status':<10} {'Description'}")
+    print("-" * 60)
+
+    for p in projects:
+        print(f"{p['name']:<25} {p['status']:<10} {p['description'][:30]}")
+
+    print("-" * 60)
+    print(f"Total: {len(projects)} projects")
+
+
+def project_info(name: str):
+    """Show project details."""
+    projects = get_projects()
+
+    # Find project (case-insensitive)
+    project = None
+    for p in projects:
+        if p["name"].lower() == name.lower():
+            project = p
+            break
+
+    if not project:
+        print(f"Project not found: {name}")
+        print("Available projects:")
+        for p in projects:
+            print(f"  • {p['name']}")
+        return
+
+    print(f"\n Project: {project['name']}")
+    print("=" * 50)
+    print(f"Status: {project['status']}")
+    print(f"Description: {project['description']}")
+    print(f"Metadata: knowledge/projects/{project['metadata_file']}")
+
+    # Check for related directories
+    prog_dir = KNOWLEDGE_BASE / "programming" / name.lower().replace(" ", "-")
+    bio_dir = KNOWLEDGE_BASE / "biology" / name.lower().replace(" ", "-")
+
+    print("\nRelated Directories:")
+    if prog_dir.exists():
+        files = list(prog_dir.glob("**/*.md"))
+        print(f"  ✓ programming/{prog_dir.name}/ ({len(files)} files)")
+    if bio_dir.exists():
+        files = list(bio_dir.glob("**/*.md"))
+        print(f"  ✓ biology/{bio_dir.name}/ ({len(files)} files)")
+
+
+def create_project(name: str, description: str = ""):
+    """Create a new project."""
+    slug = name.lower().replace(" ", "-")
+    metadata_file = PROJECTS_DIR / f"{slug}.md"
+
+    if metadata_file.exists():
+        print(f"Project already exists: {name}")
+        return
+
+    # Create metadata file from template
+    template_path = TEMPLATE_DIR / "project-template.md"
+    if template_path.exists():
+        template = template_path.read_text(encoding="utf-8")
+    else:
+        template = """---
+creation_date: {{DATE}}
+last_modified: {{DATE}}
+status: active
+description: {{DESCRIPTION}}
+---
+
+# {{PROJECT_NAME}}
+
+## Overview
+
+{{DESCRIPTION}}
+
+## Keywords
+
+-
+
+## Related Directories
+
+- `knowledge/programming/{{project-slug}}/`
+"""
+
+    today = datetime.now().strftime("%Y-%m-%d")
+    content = template.replace("{{DATE}}", today)
+    content = content.replace("{{PROJECT_NAME}}", name)
+    content = content.replace("{{DESCRIPTION}}", description or "New project")
+    content = content.replace("{{project-slug}}", slug)
+
+    # Create metadata file
+    metadata_file.write_text(content, encoding="utf-8")
+    print(f"✓ Created: knowledge/projects/{slug}.md")
+
+    # Create programming directory
+    prog_dir = KNOWLEDGE_BASE / "programming" / slug
+    prog_dir.mkdir(parents=True, exist_ok=True)
+    print(f"✓ Created: knowledge/programming/{slug}/")
+
+    # Update index
+    update_project_index(name, f"{slug}.md", "active", description or "New project")
+    print(f"✓ Updated: knowledge/projects/_index.md")
+
+    print(f"\nProject '{name}' created successfully!")
+
+
+def update_project_index(name: str, metadata_file: str, status: str, description: str):
+    """Update the projects index file."""
+    if not PROJECTS_INDEX.exists():
+        return
+
+    content = PROJECTS_INDEX.read_text(encoding="utf-8")
+
+    # Find the table and add new row
+    table_end = content.find("\n\n## Project Keywords")
+    if table_end == -1:
+        table_end = len(content)
+
+    new_row = f"| {name} | `{metadata_file}` | {status} | {description} |\n"
+
+    # Insert before empty line after table
+    insert_pos = content.rfind("\n", 0, table_end)
+    content = content[:insert_pos] + "\n" + new_row + content[insert_pos:]
+
+    PROJECTS_INDEX.write_text(content, encoding="utf-8")
+
+
+def delegate_to_skill_manager(args: List[str]):
+    """Delegate command to skill-manager."""
+    if not SKILL_MANAGER_SCRIPT.exists():
+        print(f"skill-manager not found at: {SKILL_MANAGER_SCRIPT}")
+        return
+
+    import subprocess
+    cmd = [sys.executable, str(SKILL_MANAGER_SCRIPT)] + args
+    subprocess.run(cmd)
+
+
+def main():
+    args = sys.argv[1:]
+
+    if not args or args[0] == "status":
+        show_status()
+        return
+
+    cmd = args[0]
+
+    if cmd == "project":
+        if len(args) < 2:
+            list_projects()
+            return
+
+        subcmd = args[1]
+
+        if subcmd == "list":
+            list_projects()
+        elif subcmd == "info" and len(args) > 2:
+            project_info(args[2])
+        elif subcmd == "create" and len(args) > 2:
+            desc = " ".join(args[3:]) if len(args) > 3 else ""
+            create_project(args[2], desc)
+        else:
+            print(f"Unknown project command: {subcmd}")
+            print("Available: list, info <name>, create <name> [description]")
+
+    elif cmd == "skill":
+        # Delegate to skill-manager
+        delegate_to_skill_manager(args[1:])
+
+    else:
+        print(f"Unknown command: {cmd}")
+        print("Available: status, project, skill")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,84 @@
+---
+name: environment
+description: >-
+  Windows/PowerShell environment configuration rules. Applies to all operations.
+  Covers shell commands, file paths, encoding best practices, and .cursor directory protection.
+---
+
+# Environment Configuration Rules
+
+## Operating System
+- **Platform**: Windows
+- **Shell**: PowerShell (default terminal)
+- **File System**: NTFS with Windows path separators (`\`)
+
+## PowerShell Requirements
+- All terminal commands must be PowerShell compatible
+- Use PowerShell syntax for:
+  - File operations: `Get-ChildItem`, `New-Item`, `Remove-Item`
+  - Path handling: Use `-Path` parameter and escape sequences
+  - Environment variables: `$env:VARIABLE_NAME`
+  - Execution policy: May need `Set-ExecutionPolicy` for script execution
+
+## Development Environment
+- **Code Editor**: Cursor with MCP servers configured
+- **Package Managers**:
+  - Python: pip, conda
+  - Node.js: npm, npx
+  - Universal: uvx (for Python tools)
+
+## File Path Conventions
+- Use forward slashes (`/`) in configuration files when possible
+- PowerShell accepts both `/` and `\` in most contexts
+- Escape paths with spaces using quotes: `"C:\Program Files\..."`
+
+## PowerShell Encoding Best Practices
+
+**Problem**: PowerShell has encoding issues with non-ASCII characters when passing strings directly to commands.
+
+### File Encoding
+
+| Method | Encoding | Notes |
+|--------|----------|-------|
+| `Set-Content` (no -Encoding) | System default | Works for system locale |
+| `Set-Content -Encoding UTF8` | UTF-8 with BOM | May cause issues with some tools |
+| `[System.IO.File]::WriteAllText(..., UTF8)` | UTF-8 no BOM | Best for cross-platform |
+
+**Recommendation**:
+```powershell
+# For system-default encoding (matches locale)
+Set-Content -Path "filename.txt" -Value $content
+
+# For UTF-8 without BOM (cross-platform compatible)
+[System.IO.File]::WriteAllText($path, $content, [System.Text.UTF8Encoding]::new($false))
+```
+
+### Git Commit Messages
+
+**Solutions**:
+1. **Use ASCII-only commit messages** - Avoid encoding issues entirely
+2. **Use file-based approach for non-ASCII text**:
+   ```powershell
+   # Write to temp file with UTF-8 (no BOM), then use -F flag
+   $msg = "Your message here"
+   $file = "COMMIT_MSG.tmp"
+   [System.IO.File]::WriteAllText($file, $msg, [System.Text.UTF8Encoding]::new($false))
+   git commit -F $file
+   Remove-Item $file
+   ```
+
+**Avoid**:
+- Using `@" "@ | Out-File` for non-ASCII text (may cause encoding issues)
+- Passing non-ASCII strings directly via `-m` parameter
+- Using bash heredoc syntax (`<<'EOF'`) in PowerShell
+
+## Security Considerations
+- PowerShell execution policy may restrict script execution
+- Use `-ExecutionPolicy Bypass` for temporary script execution if needed
+- Always validate file paths before operations
+
+## .cursor Directory Protection
+- **Only edit `.cursor/` files when explicitly requested by the user**
+- The `.cursor/` directory contains critical configuration files (rules, skills, settings)
+- Do NOT proactively modify, create, or delete files under `.cursor/` without explicit user instruction
+- When user explicitly requests changes to `.cursor/` files, proceed with the operation

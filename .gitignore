@@ -1,12 +1,32 @@
 # Ignore everything
 *
 
-# Un-ignore .gitignore and .cursor/
+# Un-ignore git and editor config
 !.gitignore
 !.cursorignore
+
+# Un-ignore ALL IDE skill directories
 !.cursor/
 !.cursor/**
+!.claude/
+!.claude/skills/
+!.claude/skills/**
+!.agent/
+!.agent/skills/
+!.agent/skills/**
+!.ai-skills/
+!.ai-skills/**
+!.codex/
+!.codex/skills/
+!.codex/skills/**
+!.gemini/
+!.gemini/skills/
+!.gemini/skills/**
+
+# Exclude IDE-specific non-skill config
+.claude/settings.local.json
+.claude/plans/
+.cursor/rules/
 
 # Knowledge folder has its own local git repo
-# Option 1: Ignore it completely (recommended for nested repo)
 knowledge/

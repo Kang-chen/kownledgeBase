@@ -2,19 +2,16 @@
 name: note-organizer
 description: >-
   Organizes notes into the personal knowledge base based on predefined rules.
-  Use when the user wants to save, categorize, or organize notes and ideas.
+  Use when the user wants to save, categorize, or organize notes and ideas,
+  or when content is prefixed with `[[[`.
+  Trigger on: 周回顾, weekly review (runs full weekly review workflow),
+  or any inbox processing request.
+  Proactive: On Fridays/weekends when last review was >5 days ago, suggest "本周还未进行周回顾".
 ---
 
 # NoteOrganizer Skill
 
 This skill is responsible for automatically categorizing and storing notes in the personal knowledge base.
-
-## When to Use
-
-- Use this skill when the user wants to save a new note or idea
-- Use this skill when content needs to be organized into the knowledge base
-- Use this skill when the user provides content prefixed with `[[[`
-- This skill is helpful for maintaining a structured personal knowledge base
 
 ## Workflow Steps
 
@@ -47,7 +44,7 @@ This skill is responsible for automatically categorizing and storing notes in th
 
 8. **Save File**: Use the `edit_file` tool to create a new file with the formatted content in the determined target path.
 
-9. **Update Changelog**: Add entry to `knowledge/logs/changelog.md` following the changelog skill format.
+9. **Update Changelog**: Add entry to `knowledge/logs/_changelog.md` following the changelog skill format.
 
 10. **Confirm**: Report the successful creation and location of the new note to the user.
 
@@ -63,6 +60,11 @@ This skill is responsible for automatically categorizing and storing notes in th
 ├── biology/       # Notes related to biology, bioinformatics, and research.
 │   └── {project}/       # Project-specific subdirectories
 ├── inbox/         # Inbox for unprocessed notes and ideas.
+├── archive/       # Immutable archive of original inbox files, organized by month.
+├── _memory/       # Agent memory: structured knowledge entries extracted from archive.
+│   ├── _index.md  # Knowledge index (Agent loads this first)
+│   └── entries/   # Individual knowledge entry files
+├── digests/       # Weekly review summaries.
 ├── logs/          # Logs for tracking changes and activities.
 ├── SOP/           # Standard Operating Procedures and company Loop documentation.
 ├── private/       # Private notes, credentials references, and personal information.
@@ -87,6 +89,74 @@ This skill is responsible for automatically categorizing and storing notes in th
 5. **Determine target path**: `{category}/{project}/` or `{category}/`
 6. **Execute archival**: Move file, update frontmatter, record changelog
 7. **Update project index**: If new project, update `_index.md`
+
+## Weekly Review (周回顾)
+
+Unified entry point for periodic knowledge base maintenance.
+
+### Flow
+
+1. **TODO Archive**: Load notes-categorizer skill, run Archive TODO two-phase flow
+2. **Inbox Processing**: Run three-phase inbox workflow (below)
+3. **Health Check**: Report counts per area + overdue alerts
+4. **Digest**: Generate `knowledge/digests/_YYYY-Www-digest.md`, log to changelog
+
+### Inbox Processing Workflow (Three Phases)
+
+#### Phase 1 — Archive Original Files
+
+Preserve original content integrity:
+- Move each `inbox/*.md` file to `knowledge/archive/YYYY-MM/` with date prefix
+- Move associated `.assets/` directories alongside their files
+- Do not modify file content
+
+#### Phase 2 — Extract Knowledge Entries
+
+Create Agent-searchable memory from archived files:
+- Read each archived original file
+- Extract independent knowledge entries by type:
+  - `finding`: experimental results, analysis conclusions
+  - `procedure`: reusable step-by-step workflows
+  - `decision`: decisions made and their rationale
+  - `reference`: reference materials, tool configurations
+- Each entry file goes to `knowledge/_memory/entries/` with structured frontmatter:
+
+```yaml
+---
+title: "Entry title"
+type: finding|procedure|decision|reference
+project: ProjectName
+tags: [tag1, tag2]
+keywords: [keyword1, keyword2]
+source: archive/YYYY-MM/original-file.md
+created: YYYY-MM-DD
+confidence: high|medium|low
+---
+```
+
+- **Present extraction preview to user, wait for confirmation before writing**
+
+#### Phase 3 — Update Indexes
+
+- Append new entries to `knowledge/_memory/_index.md` table
+- Update `knowledge/projects/_index.md` if new projects found
+- Log all operations to `knowledge/logs/_changelog.md`
+
+### Git Auto-Commit
+
+After each phase completes, create a git commit in the `knowledge/` inner repo:
+- Present commit message to user for confirmation before committing
+- Format: `archive: 归档 N 项TODO + 处理 M 个inbox文件 (YYYY-MM-DD)`
+- Only commit in `knowledge/` inner repo, do not affect outer repo
+
+## Task Lifecycle
+
+- New tasks enter `待规划任务` or `紧急任务` section
+- Starting work: move to `进行中任务`
+- Completed: mark `[x]`, archived during weekly review
+- Cancelled: mark `[~]`, also archived during weekly review (labeled as "已取消")
+- Keep `紧急任务` under 5 items
+- Evaluate `进行中任务` that exceed 2 weeks
 
 ## Related Skills
 
