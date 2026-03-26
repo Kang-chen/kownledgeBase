@@ -39,7 +39,7 @@ This skill is responsible for automatically categorizing and storing notes in th
 6. **Generate File Name**: Create a descriptive, hyphen-separated filename from the note's title (e.g., `my-new-research-plan.md`).
 
 7. **Format Content**:
-   - Add a YAML frontmatter block with `creation_date`, `tags`, and `project` (if applicable)
+   - Add a YAML frontmatter block with `created`, `tags`, and `project` (if applicable)
    - Ensure the content is in valid Markdown format
 
 8. **Save File**: Use the `edit_file` tool to create a new file with the formatted content in the determined target path.

@@ -94,8 +94,8 @@ When recording timestamps or dates in notes:
 Example:
 ```markdown
 ---
-creation_date: YYYY-MM-DD
-last_modified: YYYY-MM-DD HH:MM:SS
+created: YYYY-MM-DD
+modified: YYYY-MM-DD HH:MM:SS
 tags: [example, tag]
 ---
 
