@@ -45,7 +45,7 @@ knowledge/
 ├── _memory/                     # Agent memory (knowledge entries)
 │   ├── _index.md               # Knowledge index (must read for retrieval)
 │   └── entries/
-└── digests/                     # Weekly review summaries
+└── automation/                  # Agent-generated automation reports and weekly summaries
 ```
 
 ## Rule Loading Guidance (On-Demand Loading)

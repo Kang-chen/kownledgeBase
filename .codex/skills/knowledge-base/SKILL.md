@@ -27,7 +27,7 @@ All knowledge base articles are stored under the `knowledge/` directory:
   ├── _memory/       # Agent memory: structured knowledge entries extracted from archive.
   │   ├── _index.md        # Knowledge index (Agent loads this first for retrieval)
   │   └── entries/         # Individual knowledge entry files
-  ├── digests/       # Weekly review summaries (_YYYY-Www-digest.md).
+  ├── automation/    # Agent-generated automation reports and weekly summaries.
   ├── logs/          # Logs for tracking changes and activities.
   ├── SOP/           # Standard Operating Procedures and company Loop documentation.
   ├── private/       # Private notes, credentials references, and personal information.
@@ -36,14 +36,15 @@ All knowledge base articles are stored under the `knowledge/` directory:
 
 ## `_` Prefix Naming Convention
 
-Files and directories prefixed with `_` are Agent-maintained metadata (indexes, logs, digests, memory store). Users should not manually edit these — Agent updates them automatically during operations.
+Files and directories prefixed with `_` are Agent-maintained metadata (indexes, logs, memory store). Users should not manually edit these — Agent updates them automatically during operations.
 
 Examples:
 - `logs/_changelog.md` — Agent-appended operation log
 - `projects/_index.md` — Agent-maintained project index
 - `_memory/` — Agent memory directory (knowledge entries + index)
 - `_memory/_index.md` — Agent memory index
-- `digests/_YYYY-Www-digest.md` — Agent-generated weekly digest
+- `automation/_YYYY-Www-digest.md` — Agent-generated weekly digest
+- `automation/*maintenance-scan*.md` — Agent-generated maintenance scan reports
 
 Files **without** `_` prefix are user-editable content:
 - `todolist.md`, `inbox/*.md`, `_memory/entries/*.md`, `planning/YYYY-MM/completed-todos-*.md`
