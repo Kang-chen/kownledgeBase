@@ -31,7 +31,33 @@ When these keywords are detected:
 
 Archives completed and cancelled todo items from `knowledge/planning/todolist.md` into weekly archive files.
 
-**Two-Phase Execution** (both phases are mandatory):
+**Three-Phase Execution** (Phase 0 and Phase 1 are preview-only; Phase 2 mutates files only after user confirmation):
+
+#### Phase 0 — Format & Enrich Preview
+
+Before archiving anything, present a review packet in the conversation instead of editing `todolist.md` or creating new planning files.
+
+1. Read `knowledge/planning/todolist.md` and preserve the original task text.
+2. Normalize the preview into the standard sections: `紧急任务`, `进行中任务`, `待规划任务`, plus any detected loose wiki-link headings.
+3. Identify archivable top-level items:
+   - `[x]` — completed tasks
+   - `[~]` — cancelled tasks
+   - Struck-through completed tasks, if present
+4. Enrich each candidate with:
+   - source section
+   - related wiki links or file references
+   - sub-task counts (`done/total`)
+   - suggested archive reason
+   - follow-up action, if the item changes ongoing priorities
+5. Identify non-archivable but messy items:
+   - active parents with completed sub-tasks
+   - task headings with no checkbox
+   - stale `进行中任务` older than two weeks when dates are available
+   - tasks that should become project hubs or inbox chunks instead of completed TODO archive
+6. Present the review packet to the user and wait for confirmation before Phase 1.
+7. Do not create persistent dry-run documents by default. Only save a review packet if the user explicitly asks for a file.
+8. If the user asks to save the review packet, write it in Chinese and place it in an agent-maintained review area, not beside durable planning notes.
+9. Do not remove, rewrite, or reorder tasks in `todolist.md` during Phase 0.
 
 #### Phase 1 — Scan & Preview
 
@@ -49,7 +75,8 @@ Archives completed and cancelled todo items from `knowledge/planning/todolist.md
 | 2 | ❌ 取消 | Task description | 1/2 |
 ```
 
-5. **Wait for user confirmation before proceeding to Phase 2**
+5. Include the Phase 0 enrichment fields when presenting the preview table.
+6. **Wait for user confirmation before proceeding to Phase 2**
 
 #### Phase 2 — Execute Archive
 
@@ -69,6 +96,7 @@ tags: [planning, archive, completed-todos]
 6. Remove archived items from source `todolist.md`
 7. Append to `knowledge/logs/_changelog.md`
 8. Present summary: N completed, M cancelled, archive file path
+9. If this is part of inbox/weekly archival, include only the TODO items that changed ongoing priorities in the final archive signal report. Do not list routine completed tasks unless they affect next actions.
 
 ---
 

@@ -6,7 +6,7 @@ description: >-
   or when content is prefixed with `[[[`.
   Trigger on: 周回顾, weekly review (runs full weekly review workflow),
   or any inbox processing request.
-  Proactive: On Fridays/weekends when last review was >5 days ago, suggest "本周还未进行周回顾".
+  Proactive: On Fridays/weekends when last review was more than 5 days ago, suggest "本周还未进行周回顾".
 ---
 
 # NoteOrganizer Skill
@@ -64,7 +64,7 @@ This skill is responsible for automatically categorizing and storing notes in th
 ├── _memory/       # Agent memory: structured knowledge entries extracted from archive.
 │   ├── _index.md  # Knowledge index (Agent loads this first)
 │   └── entries/   # Individual knowledge entry files
-├── digests/       # Weekly review summaries.
+├── automation/    # Agent-generated automation reports and weekly summaries.
 ├── logs/          # Logs for tracking changes and activities.
 ├── SOP/           # Standard Operating Procedures and company Loop documentation.
 ├── private/       # Private notes, credentials references, and personal information.
@@ -83,12 +83,48 @@ This skill is responsible for automatically categorizing and storing notes in th
 ## Inbox Archival Workflow
 
 1. **Load project index**: `Read: knowledge/projects/_index.md`
-2. **Analyze file content**: Identify topics and keywords
-3. **Match project**: Determine project affiliation based on keyword mapping
-4. **Load target rules**: Read corresponding skill based on target directory
-5. **Determine target path**: `{category}/{project}/` or `{category}/`
-6. **Execute archival**: Move file, update frontmatter, record changelog
-7. **Update project index**: If new project, update `_index.md`
+2. **Present review packet first**: classify each inbox file or folder into chunks before moving content
+3. **Analyze file content**: Identify topics, keywords, source links, and unfinished context
+4. **Match project**: Determine project affiliation based on keyword mapping
+5. **Load target rules**: Read corresponding skill based on target directory
+6. **Determine target path**: `{category}/{project}/`, `knowledge/planning/`, a confirmed project hub, or archive-only
+7. **Execute only confirmed chunks**: Archive or extract approved chunks; leave active chunks in inbox or a hub
+8. **Update project index**: If new project/hub is created, update `_index.md`
+
+### Inbox Chunk Packet Rules
+
+Use chunk packets for any inbox file that is large, mixed-topic, unfinished, or project-like.
+
+Each chunk must be assigned exactly one status:
+- `archive-ready`: finished context that can be moved or extracted now
+- `active-context`: unfinished work that must remain easy to resume
+- `reference-only`: supporting material that should be linked from a hub or memory entry, not expanded in reports
+- `needs-user-decision`: ambiguous material that should not be moved until the user confirms
+
+Chunk packet requirements:
+- Preserve the original inbox file unless the user confirms a move.
+- Record `source`, `suggested target`, `project/topic`, `reason`, and `next action` for every chunk.
+- Prefer partial archival over all-or-nothing archival for large files.
+- For folders, classify reports, scripts, raw data, figures, and generated assets separately.
+- Never treat an unfinished project note as blocked from archival; archive completed chunks and keep the remaining context active.
+- Present chunk packets in the conversation by default. Do not create persistent dry-run documents unless the user explicitly asks for a saved file.
+- If a saved packet is requested, write it in Chinese and place it in an agent-maintained review area, not in a domain directory such as `planning/`, `biology/`, or `programming/`.
+
+### Project Hub Rules
+
+Recommend a hub when an inbox item spans multiple review cycles, contains recurring weekly work, or mixes plans, reports, scripts, and decisions. Create or update the hub only after the user confirms that it should become a durable note.
+
+Confirmed hub files should live in the most natural active area, usually:
+- `knowledge/planning/{topic}-hub.md` for workflows, recurring reports, and project management
+- `knowledge/projects/{project}.md` when it represents durable project metadata
+- `knowledge/programming/{project}/` or `knowledge/biology/{project}/` for domain-specific reusable work
+
+Hub content should be concise, written in Chinese unless source terminology requires otherwise:
+- current status
+- active questions
+- latest useful links
+- archived chunks with source paths
+- next review decision
 
 ## Weekly Review (周回顾)
 
@@ -96,19 +132,49 @@ Unified entry point for periodic knowledge base maintenance.
 
 ### Flow
 
-1. **TODO Archive**: Load notes-categorizer skill, run Archive TODO two-phase flow
-2. **Inbox Processing**: Run three-phase inbox workflow (below)
+0. **Lightweight Harness Scan**: Report clutter risks before moving files
+1. **TODO Archive**: Load notes-categorizer skill, run Archive TODO Phase 0 review packet, then confirmed archive phases
+2. **Inbox Processing**: Run chunk-packet inbox workflow (below)
 3. **Health Check**: Report counts per area + overdue alerts
-4. **Digest**: Generate `knowledge/digests/_YYYY-Www-digest.md`, log to changelog
+4. **Digest**: Generate `knowledge/automation/_YYYY-Www-digest.md`, log to changelog
 
-### Inbox Processing Workflow (Three Phases)
+### Lightweight Harness Scan
+
+Before TODO or inbox archival, present a scan report in the conversation. This is advisory and must not block work.
+
+Flag:
+- `temp.md`, `Temp.md`, unnamed notes, and root-level generated reports
+- files under `knowledge/tmp/`
+- large files or folders in active areas
+- generated assets, screenshots, browser/runtime artifacts, and ad-hoc scripts
+- inbox folders that combine reports, code, data, and figures
+- possible sensitive config or credentials outside `knowledge/private/`
+- untracked or dirty inner-repo state that should be committed in batches
+
+For each candidate, recommend one action: `keep`, `archive`, `private`, `delete-after-confirmation`, or `needs-review`.
+
+Do not create a persistent scan report by default. Save one only when the user explicitly asks for a file, and keep it outside durable domain-note directories.
+
+### Inbox Processing Workflow (Chunk-First Phases)
+
+#### Phase 0 — Chunk Review Packet
+
+Do this before moving any inbox file.
+
+1. Read `knowledge/projects/_index.md` and `knowledge/_memory/_index.md`.
+2. Classify each inbox item into chunk statuses: `archive-ready`, `active-context`, `reference-only`, `needs-user-decision`.
+3. Identify suggested project hubs for recurring or unfinished work; do not create them yet.
+4. Present the chunk packet and wait for confirmation before moving, extracting, or deleting anything.
+5. Keep original files intact during Phase 0.
+6. Keep Phase 0 output ephemeral unless the user explicitly asks to persist it.
 
 #### Phase 1 — Archive Original Files
 
 Preserve original content integrity:
-- Move each `inbox/*.md` file to `knowledge/archive/YYYY-MM/` with date prefix
-- Move associated `.assets/` directories alongside their files
+- Move only user-confirmed `archive-ready` files or chunks to `knowledge/archive/YYYY-MM/` with date prefix
+- Move associated `.assets/` directories alongside their files only when their parent file is moved
 - Do not modify file content
+- If only part of a file is `archive-ready`, create an extracted archive note that cites the original source; keep the original inbox file until the user confirms pruning
 
 #### Phase 2 — Extract Knowledge Entries
 
@@ -141,6 +207,33 @@ confidence: high|medium|low
 - Append new entries to `knowledge/_memory/_index.md` table
 - Update `knowledge/projects/_index.md` if new projects found
 - Log all operations to `knowledge/logs/_changelog.md`
+
+#### Phase 4 — Weekly Archive Signal Report
+
+After TODO and inbox processing, produce a short decision-oriented report. Do not list every extracted item.
+
+Use this filter:
+1. **AAR**: What was intended? What happened? What changed in practice? What should be reused next time?
+2. **Reuse class**: command, process, skill, agent, method, or archive-only.
+3. **Skill decision**: recommend `create skill`, `refine existing skill`, `memory only`, or `defer`.
+4. **Priority**: use an adapted RICE check: reuse frequency, impact, confidence, and maintenance effort.
+
+Report format:
+
+```markdown
+## 本周值得注意
+1. <one reusable insight>
+   Decision: create skill | refine existing skill | memory only | defer
+   Why: <one sentence>
+   Next: <one concrete action>
+```
+
+Rules:
+- Include at most 3 recommendations.
+- Include at most 2 memory-only notes.
+- Do not recommend a new skill unless the trigger and steps are clear.
+- Prefer refining an existing skill over creating a new one when the workflow is already covered.
+- Avoid broad lists such as "commands/processes/agents/methods" unless each item has a decision and next action.
 
 ### Git Auto-Commit
 
